@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obaloot · Türk efsanelerinden bir zindan RPG'si</title>
+<meta name="description" content="Obanın kutu yerin dibine düştü. Dede Korkut, Basat, Asena ve Şahmeran ile Derinkuyu'ya in, Karakura'yı ve Tepegöz'ü devir. Ücretsiz, App Store ve Google Play'de.">
+<meta property="og:title" content="Obaloot · Höyüğe in">
+<meta property="og:description" content="Türk efsanelerinden bir zindan RPG'si. Ücretsiz, App Store ve Google Play'de.">
+<meta property="og:image" content="https://obaloot.com/art/og.png">
+<meta property="og:url" content="https://obaloot.com/">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<!-- the descent (Serdar picked prototype C, 2026-11-20): the drawn map of the
+     land on top, then the page scrolls down the floors to the kut. On a wide
+     screen the map stays pinned on the left while the floors scroll. -->
+<style>
+@font-face { font-family: Jersey; src: url(Jersey10-Regular.ttf); font-display: swap; }
+@font-face { font-family: Alegreya; src: url(AlegreyaSans-Medium.ttf); font-display: swap; }
+:root { --ground:#140d0a; --ink:#f2e6ce; --dim:#b3a183; --weld:#f0c860; --madder:#a82a26; --bone:#e8dcc2; --night:#1b1220; }
+* { box-sizing:border-box; margin:0; }
+html { scroll-behavior: smooth; }
+body { background: var(--ground); color: var(--ink); font: 18px/1.5 Alegreya, system-ui, sans-serif; }
+a { color: inherit; }
+
+.top { position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:10px; padding: 12px 16px; background: rgba(20,13,10,.92); border-bottom: 1px solid #2c1f18; }
+.top img { width:32px; height:32px; border-radius:8px; }
+.top b { font:normal 28px/1 Jersey, monospace; color: var(--weld); }
+.top .get { margin-left:auto; font:normal 20px/1 Jersey, monospace; color:#1a0f08; background: var(--weld); padding: 8px 12px 9px; border: 2px solid #000; text-decoration:none; }
+
+.surface { background: var(--night); }
+.surface img { display:block; width: 100%; max-width: 560px; margin: 0 auto; image-rendering: pixelated; }
+
+.intro { padding: 24px 16px 4px; max-width: 560px; margin: 0 auto; }
+.intro .kicker { font-size: 14px; color: var(--dim); letter-spacing: .08em; }
+.intro h1 { font:normal clamp(56px, 13vw, 92px)/.9 Jersey, monospace; color: var(--weld); margin-top: 6px; }
+.intro p { margin-top: 12px; color:#e3d5b9; }
+.go { display:block; text-align:center; margin: 20px 16px 0; font:normal 30px/1 Jersey, monospace; color: var(--bone); background: var(--madder); padding: 16px 12px 18px; border:2px solid #000; box-shadow: inset 0 -6px 0 rgba(0,0,0,.3); text-decoration:none; }
+.go small { display:block; font:15px/1.2 Alegreya, sans-serif; opacity:.85; margin-top: 5px; }
+
+/* the descent: the earth's layers as the page itself, a floor per stop */
+.earth { position: relative; margin-top: 34px; background-image: url(art/strata.png); background-size: 100% auto; background-repeat: repeat-y; image-rendering: pixelated; padding: 40px 0 10px; }
+.earth::before { content:""; position:absolute; inset:0; background: linear-gradient(90deg, rgba(14,9,7,.92) 0%, rgba(14,9,7,.78) 55%, rgba(14,9,7,.55) 100%); }
+.line { position:absolute; left: 41px; top: 0; bottom: 0; width: 4px; background: repeating-linear-gradient(var(--weld) 0 8px, transparent 8px 16px); opacity:.5; }
+.floor { position: relative; max-width: 760px; margin: 0 auto 34px; padding: 0 14px; display: grid; grid-template-columns: 58px 1fr; gap: 10px; align-items: start; }
+.depth { font:normal 18px/1 Jersey, monospace; color: #1a0f08; background: var(--weld); text-align:center; padding: 8px 4px; border: 2px solid #000; }
+.depth span { display:block; font-size: 34px; }
+.body { background: rgba(26,17,12,.88); border: 2px solid #000; outline: 1px solid #5b4330; outline-offset:-5px; padding: 14px; display:grid; grid-template-columns: 1fr 84px; gap: 10px; align-items:end; }
+.body h2 { font:normal 32px/1 Jersey, monospace; color: var(--weld); }
+.body h2.foe { color: #e0614f; }
+.body p { color:#dccdb1; font-size: 16px; margin-top: 6px; }
+.body img { width: 84px; image-rendering: pixelated; justify-self:end; }
+
+.kut { text-align:center; padding: 50px 16px 60px; background: radial-gradient(circle at 50% 30%, #4a2a10 0%, var(--ground) 60%); }
+.orb { width: 70px; height: 70px; margin: 0 auto 16px; border-radius: 50%; background: radial-gradient(circle, #fff3c0 0%, #f0c860 35%, #a8601a 70%, transparent 72%); box-shadow: 0 0 60px #f0a040; }
+.kut h2 { font:normal 48px/1 Jersey, monospace; color: var(--weld); }
+.kut p { color: var(--dim); margin: 8px auto 18px; max-width: 30em; }
+.stores { display:flex; gap: 10px; justify-content:center; flex-wrap: wrap; }
+/* the stores' own badges, one height (their brand rules) */
+.stores { align-items: center; }
+.stores img { display:block; height: 56px; width: auto; }
+
+footer { padding: 20px 16px 36px; color: var(--dim); font-size: 15px; text-align:center; border-top: 6px solid; border-image: repeating-linear-gradient(90deg, var(--madder) 0 14px, #24406a 14px 28px) 6; }
+footer a { color: var(--dim); margin: 0 8px; }
+
+/* wide screens: the map pinned on the left, the descent scrolling beside it */
+@media (min-width: 960px) {
+  .page { display: grid; grid-template-columns: minmax(380px, 44%) 1fr; }
+  .surface { position: sticky; top: 57px; height: calc(100vh - 57px); display:flex; align-items:center; justify-content:center; }
+  .surface img { height: 100%; width: auto; max-width: none; }
+  .intro { max-width: 640px; padding: 56px 40px 4px; margin: 0; }
+  .go { margin: 24px 40px 0; max-width: 560px; }
+  .floor { grid-template-columns: 86px 1fr; gap: 14px; padding: 0 40px; margin-left: 0; }
+  .body { grid-template-columns: 1fr 120px; padding: 18px; }
+  .body img { width: 120px; }
+  .line { left: 81px; }
+}
+</style>
+</head>
+<body>
+<div class="top"><img src="icon.png" alt=""><b>Obaloot</b><a class="get" href="indir/?k=web">İndir</a></div>
+<div class="page">
+  <div class="surface"><img src="art/world_map.png" alt="Obaloot'un dünya haritası: oba, Derinkuyu, Urman, Kökdöö Yurdu ve Kervan Yolu"></div>
+  <div>
+    <div class="intro">
+      <div class="kicker">TÜRK EFSANELERİNDEN BİR ZİNDAN RPG'Sİ</div>
+      <h1>Höyüğe in.</h1>
+      <p>Obanın kutu yerin dibine düştü. Türk efsanelerinin alplarıyla Derinkuyu'ya in, kat kat bekçileri devir, kutu geri getir.</p>
+    </div>
+    <a class="go" href="indir/?k=web">İn · Ücretsiz indir<small>App Store ve Google Play</small></a>
+
+    <div class="earth">
+      <div class="line"></div>
+      <div class="floor"><div class="depth">Kat<span>1</span></div><div class="body"><div><h2>Dört alp</h2><p>Dede Korkut ateş başında anlatır. Basat, Asena, Şahmeran ve sen: ilk kapıdan in.</p></div><img src="art/korkut.png" alt="Dede Korkut"></div></div>
+      <div class="floor"><div class="depth">Kat<span>5</span></div><div class="body"><div><h2 class="foe">Koç Boynuzlu Dev</h2><p>İlk bekçi. Zırhı kalın, sırtı dikenli. Devirirsen ilk kapı mühürlenir.</p></div><img src="art/koc.png" alt="Koç Boynuzlu Dev"></div></div>
+      <div class="floor"><div class="depth">Kat<span>9</span></div><div class="body"><div><h2 class="foe">Karakura</h2><p>Gece uyuyanın göğsüne çöker. "Düşlerinizde bile size gülüyoruz."</p></div><img src="art/karakura.png" alt="Karakura"></div></div>
+      <div class="floor"><div class="depth">Kat<span>13</span></div><div class="body"><div><h2 class="foe">Tepegöz</h2><p>Oğuz'dan günde iki adam istedi. Basat onu kendi kılıcıyla devirdi. Şimdi sıra sende.</p></div><img src="art/tepegoz.png" alt="Tepegöz"></div></div>
+    </div>
+
+    <div class="kut">
+      <div class="orb"></div>
+      <h2>Kut burada.</h2>
+      <p>Daha aşağısı da var: Kervan Yolu, Urman, Kökdöö Yurdu. 58 alp, her biri kendi destanından.</p>
+      <div class="stores"><a href="https://play.google.com/store/apps/details?id=com.ossaritas.obaloot&amp;referrer=utm_source%3Dweb%26utm_medium%3Dsite"><img src="badges/google_play_tr.png" alt="Google Play'den indirin" height="56"></a><a href="https://apps.apple.com/app/apple-store/id6815224192"><img src="badges/app_store_tr.png" alt="App Store'dan indirin" height="56"></a></div>
+    </div>
+    <footer>
+      <a href="https://t.me/obaloot">Telegram</a><a href="https://www.instagram.com/obaloot/">Instagram</a><a href="https://www.tiktok.com/@obaloot_tr">TikTok</a><a href="https://www.youtube.com/channel/UCFutLmWdsLt3pGIjafzOuRQ">YouTube</a><a href="https://x.com/Obaloot">X</a><br><br>
+      <a href="support.html">Destek · Support</a><a href="privacy.html">Gizlilik · Privacy</a><br><br>© 2026 Obaloot
+    </footer>
+  </div>
+</div>
+</body>
+</html>

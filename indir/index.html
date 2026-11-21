@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obaloot · İndir</title>
+<link rel="icon" href="../icon.png">
+<!-- One link for every bio: obaloot.com/indir/?k=tiktok (or instagram, youtube,
+     web). An iPhone goes straight to the App Store, an Android phone to Google
+     Play once the game is live there; anything else sees both buttons. k is
+     passed on as the App Store campaign (ct, with the provider token pt) and
+     the Play referrer (utm_source), so the stores count installs per channel. -->
+<style>
+@font-face { font-family: Jersey; src: url(../Jersey10-Regular.ttf); }
+@font-face { font-family: Alegreya; src: url(../AlegreyaSans-Medium.ttf); }
+body { margin:0; min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:#140d0a; color:#f2e6ce; font:18px/1.5 Alegreya, system-ui, sans-serif; text-align:center; padding: 24px; box-sizing:border-box; }
+img { width: 96px; height: 96px; border-radius: 22px; }
+h1 { font: normal 52px/1 Jersey, monospace; color: #f0c860; margin: 6px 0 0; }
+p { color: #b3a183; margin: 0 0 8px; }
+a.btn { display:block; width: min(320px, 100%); font: normal 28px/1 Jersey, monospace; padding: 14px 12px 16px; border: 2px solid #000; text-decoration: none; }
+.a { background: #f0c860; color: #1a0f08; }
+.g { background: #2a1e17; color: #b3a183; }
+</style>
+<script>
+(function () {
+  var APP = 'https://apps.apple.com/app/apple-store/id6815224192';
+  var PT = '';            // App Store Connect provider token, for campaign links
+  var PLAY = 'https://play.google.com/store/apps/details?id=com.ossaritas.obaloot';
+  var PLAY_LIVE = true;      // true once Google Play production is open
+  var k = (new URLSearchParams(location.search).get('k') || 'web').replace(/[^a-z0-9_-]/gi, '').slice(0, 40) || 'web';
+  var app = PT ? APP + '?pt=' + PT + '&ct=' + k + '&mt=8' : APP;
+  var play = PLAY + '&referrer=' + encodeURIComponent('utm_source=' + k + '&utm_medium=bio');
+  var ua = navigator.userAgent;
+  var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var android = /Android/.test(ua);
+  window.OBALOOT = { app: app, play: play, live: PLAY_LIVE };
+  if (ios) { location.replace(app); }
+  else if (android && PLAY_LIVE) { location.replace(play); }
+})();
+</script>
+</head>
+<body>
+<img src="../icon.png" alt="">
+<h1>Obaloot</h1>
+<p>Türk efsanelerinden bir zindan RPG'si. Ücretsiz.</p>
+<a class="btn a" id="app" href="https://apps.apple.com/app/apple-store/id6815224192">App Store</a>
+<a class="btn g" id="play" href="https://play.google.com/store/apps/details?id=com.ossaritas.obaloot">Google Play</a>
+<script>
+  document.getElementById('app').href = OBALOOT.app;
+  if (OBALOOT.live) { var g = document.getElementById('play'); g.href = OBALOOT.play; g.textContent = 'Google Play'; g.className = 'btn a'; }
+</script>
+</body>
+</html>
